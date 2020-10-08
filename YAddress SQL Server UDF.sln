@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30523.141
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YAddress SQL Server UDF", "YAddress SQL Server UDF.csproj", "{0B1FB160-7E76-4D85-9268-BA1F422C1DFD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApp", "TestApp\TestApp.csproj", "{21175BCB-CD2A-44B8-8E73-A186463F94BD}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0B1FB160-7E76-4D85-9268-BA1F422C1DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B1FB160-7E76-4D85-9268-BA1F422C1DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B1FB160-7E76-4D85-9268-BA1F422C1DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B1FB160-7E76-4D85-9268-BA1F422C1DFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{21175BCB-CD2A-44B8-8E73-A186463F94BD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{21175BCB-CD2A-44B8-8E73-A186463F94BD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{21175BCB-CD2A-44B8-8E73-A186463F94BD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{21175BCB-CD2A-44B8-8E73-A186463F94BD}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0940346A-7091-4BA5-AF7F-5C906857D293}
+	EndGlobalSection
+EndGlobal
