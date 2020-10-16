@@ -45,6 +45,7 @@ GeocodePrecision: 5 <br>
 TimeZoneOffset: -5<br>
 DstObserved: 1<br>
 SalesTaxRate: 6.625
+SalesTaxJurisdiction: State of NJ
 
 ### SQL Spatial Geography
 
