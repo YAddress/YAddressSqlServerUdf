@@ -44,7 +44,7 @@ Longitude: -74.005973<br>
 GeocodePrecision: 5 <br>
 TimeZoneOffset: -5<br>
 DstObserved: 1<br>
-SalesTaxRate: 6.625
+SalesTaxRate: 6.625<br>
 SalesTaxJurisdiction: State of NJ
 
 ### SQL Spatial Geography
