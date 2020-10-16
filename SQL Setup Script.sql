@@ -45,7 +45,8 @@ RETURNS TABLE
         GeocodePrecision int,
         TimeZoneOffset int,
         DstObserved bit,
-        SalesTaxRate smallmoney
+        SalesTaxRate smallmoney,
+        SalesTaxJurisdiction nvarchar(255)
 )
 AS 
 EXTERNAL NAME YAddressSqlFunction.YAddressSqlFunction.InitMethod

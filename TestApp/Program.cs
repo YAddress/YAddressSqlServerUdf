@@ -38,6 +38,7 @@ namespace TestApp
             SqlInt32 TimeZoneOffset;
             SqlBoolean DstObserved;
             SqlMoney SalesTaxRate;
+            string SalesTaxJurisdiction;
 
             IEnumerator r = e.GetEnumerator();
             r.MoveNext();
@@ -67,7 +68,8 @@ namespace TestApp
                 out GeoPrecision,
                 out TimeZoneOffset,
                 out DstObserved,
-                out SalesTaxRate);
+                out SalesTaxRate,
+                out SalesTaxJurisdiction);
         }
     }
 }

@@ -22,7 +22,7 @@ public class YAddressSqlFunction
             Uri.EscapeDataString(sUserKey ?? ""));
         HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(sRequest);
         req.Accept = "application/xml";
-        req.UserAgent = "YAddress SQL Server UDF 1.1.0";
+        req.UserAgent = "YAddressSqlServerUdf/1.2.0";
         WebResponse res = req.GetResponse();
         StreamReader sr = new StreamReader(res.GetResponseStream());
         string sRes = sr.ReadToEnd();
@@ -61,7 +61,8 @@ public class YAddressSqlFunction
         out SqlInt32 GeoPrecision,
         out SqlInt32 TimeZoneOffset,
         out SqlBoolean DstObserved,
-        out SqlMoney SalesTaxRate)
+        out SqlMoney SalesTaxRate,
+        out string SalesTaxJurisdiction)
     {
         // Load XML doc
         XmlDocument doc = new XmlDocument();
@@ -94,6 +95,7 @@ public class YAddressSqlFunction
         TimeZoneOffset = doc.GetOptionalInt("TimeZoneOffset") ?? SqlInt32.Null;
         DstObserved = doc.GetOptionalBool("DstObserved") ?? SqlBoolean.Null;
         SalesTaxRate = doc.GetOptionalDecimal("SalesTaxRate") ?? SqlMoney.Null;
+        SalesTaxJurisdiction = doc.GetOptionalString("SalesTaxJurisdiction");
     }
 }
 
