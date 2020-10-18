@@ -64,38 +64,46 @@ public class YAddressSqlFunction
         out SqlMoney SalesTaxRate,
         out string SalesTaxJurisdiction)
     {
-        // Load XML doc
-        XmlDocument doc = new XmlDocument();
-        doc.LoadXml((string)obj);
+        try
+        {
+            // Load XML doc
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml((string)obj);
+            XmlNode nd = doc.FirstChild;
 
-        // Parse values
-        ErrorCode = doc.GetInt("ErrorCode");
-        ErrorMessage = doc.GetString("ErrorMessage");
-        AddressLine1 = doc.GetOptionalString("AddressLine1");
-        AddressLine2 = doc.GetOptionalString("AddressLine2");
-        Number = doc.GetOptionalString("Number");
-        PreDir = doc.GetOptionalString("PreDir");
-        Street = doc.GetOptionalString("Street");
-        Suffix = doc.GetOptionalString("Suffix");
-        PostDir = doc.GetOptionalString("PostDir");
-        Sec = doc.GetOptionalString("Sec");
-        SecNumber = doc.GetOptionalString("SecNumber");
-        City = doc.GetOptionalString("City");
-        State = doc.GetOptionalString("State");
-        Zip = doc.GetOptionalString("Zip");
-        Zip4 = doc.GetOptionalString("Zip4");
-        County = doc.GetOptionalString("County");
-        StateFP = doc.GetOptionalString("StateFP");
-        CountyFP = doc.GetOptionalString("CountyFP");
-        CensusBlock = doc.GetOptionalString("CensusBlock");
-        CensusTract = doc.GetOptionalString("CensusTract");
-        Latitude = doc.GetOptionalDouble("Latitude") ?? SqlDouble.Null;
-        Longitude = doc.GetOptionalDouble("Longitude") ?? SqlDouble.Null;
-        GeoPrecision = doc.GetOptionalInt("GeoPrecision") ?? SqlInt32.Null;
-        TimeZoneOffset = doc.GetOptionalInt("TimeZoneOffset") ?? SqlInt32.Null;
-        DstObserved = doc.GetOptionalBool("DstObserved") ?? SqlBoolean.Null;
-        SalesTaxRate = doc.GetOptionalDecimal("SalesTaxRate") ?? SqlMoney.Null;
-        SalesTaxJurisdiction = doc.GetOptionalString("SalesTaxJurisdiction");
+            // Parse values
+            ErrorCode = nd.GetInt("ErrorCode");
+            ErrorMessage = nd.GetString("ErrorMessage");
+            AddressLine1 = nd.GetOptionalString("AddressLine1");
+            AddressLine2 = nd.GetOptionalString("AddressLine2");
+            Number = nd.GetOptionalString("Number");
+            PreDir = nd.GetOptionalString("PreDir");
+            Street = nd.GetOptionalString("Street");
+            Suffix = nd.GetOptionalString("Suffix");
+            PostDir = nd.GetOptionalString("PostDir");
+            Sec = nd.GetOptionalString("Sec");
+            SecNumber = nd.GetOptionalString("SecNumber");
+            City = nd.GetOptionalString("City");
+            State = nd.GetOptionalString("State");
+            Zip = nd.GetOptionalString("Zip");
+            Zip4 = nd.GetOptionalString("Zip4");
+            County = nd.GetOptionalString("County");
+            StateFP = nd.GetOptionalString("StateFP");
+            CountyFP = nd.GetOptionalString("CountyFP");
+            CensusBlock = nd.GetOptionalString("CensusBlock");
+            CensusTract = nd.GetOptionalString("CensusTract");
+            Latitude = nd.GetOptionalDouble("Latitude") ?? SqlDouble.Null;
+            Longitude = nd.GetOptionalDouble("Longitude") ?? SqlDouble.Null;
+            GeoPrecision = nd.GetOptionalInt("GeoPrecision") ?? SqlInt32.Null;
+            TimeZoneOffset = nd.GetOptionalInt("TimeZoneOffset") ?? SqlInt32.Null;
+            DstObserved = nd.GetOptionalBool("DstObserved") ?? SqlBoolean.Null;
+            SalesTaxRate = nd.GetOptionalDecimal("SalesTaxRate") ?? SqlMoney.Null;
+            SalesTaxJurisdiction = nd.GetOptionalString("SalesTaxJurisdiction");
+        }
+        catch(Exception ex)
+        {
+            throw new Exception($"Error parsing YAddress Web API response: {obj}", ex);
+        }
     }
 }
 
@@ -107,106 +115,52 @@ namespace System.Runtime.CompilerServices
     public sealed class ExtensionAttribute : Attribute { }
 }
 
-static class XmlDocExtensions
+static class XmlNodeExtensions
 {
-    public static int GetInt(this XmlDocument doc, string sName)
+    public static int GetInt(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            throw new XmlException($"Node not found: {sName}");
-
-        // Parse value
-        int n;
-        if (!int.TryParse(nd.InnerText, out n))
-            throw new XmlException($"Node content is not int: {sName}");
-
-        return n;
+        return int.Parse(xml.SelectSingleNode(sName).InnerText);
     }
 
-    public static int? GetOptionalInt(this XmlDocument doc, string sName)
+    public static int? GetOptionalInt(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            return null;
-
-        // Parse value
-        int n;
-        if (!int.TryParse(nd.InnerText, out n))
-            return null;
-
-        return n;
+        if (int.TryParse(xml.SelectSingleNode(sName)?.InnerText, out int n))
+            return n;
+        return null;
     }
 
-    public static string GetString(this XmlDocument doc, string sName)
+    public static string GetString(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            throw new XmlException($"Node not found: {sName}");
-
-        return nd.InnerText;
+        return xml.SelectSingleNode(sName).InnerText;
     }
 
-    public static string GetOptionalString(this XmlDocument doc, string sName)
+    public static string GetOptionalString(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            return null;
-
-        return nd.InnerText;
+        return xml.SelectSingleNode(sName)?.InnerText;
     }
 
-    public static double? GetOptionalDouble(this XmlDocument doc, string sName)
+    public static double? GetOptionalDouble(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            return null;
-
-        // Parse value
-        double f;
-        if (!double.TryParse(nd.InnerText, out f))
-            return null;
-
-        return f;
+        if (double.TryParse(xml.SelectSingleNode(sName)?.InnerText, out double f))
+            return f;
+        return null;
     }
 
-    public static decimal? GetOptionalDecimal(this XmlDocument doc, string sName)
+    public static decimal? GetOptionalDecimal(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            return null;
-
-        // Parse value
-        decimal f;
-        if (!decimal.TryParse(nd.InnerText, out f))
-            return null;
-
-        return f;
+        if (decimal.TryParse(xml.SelectSingleNode(sName)?.InnerText, out decimal f))
+            return f;
+        return null;
     }
 
-    public static bool? GetOptionalBool(this XmlDocument doc, string sName)
+    public static bool? GetOptionalBool(this XmlNode xml, string sName)
     {
-        // Find element
-        XmlNode nd = doc.SelectSingleNode($"Address/{sName}");
-        if (nd == null)
-            return null;
-
-        // Parse value
-        bool b;
-        if (!bool.TryParse(nd.InnerText, out b))
-        {
-            int n;
-            if (!int.TryParse(nd.InnerText, out n))
-                return null;
+        XmlNode nd = xml.SelectSingleNode(sName);
+        if (bool.TryParse(nd?.InnerText, out bool b))
+            return b;
+        if (int.TryParse(nd?.InnerText, out int n))
             return (n != 0);
-        }
-
-        return b;
+        return null;
     }
 
 }
