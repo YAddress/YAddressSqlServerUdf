@@ -12,10 +12,16 @@ GO
 -- Replace the path as appropriate
 CREATE ASSEMBLY YAddressSqlFunction
 FROM 'C:\temp\YAddressSqlFunction.dll' 
-WITH PERMISSION_SET = EXTERNAL_ACCESS;
+WITH PERMISSION_SET = UNSAFE;
 GO
 
--- Create a User Defined Function
+-- Create SetBaseUrl User Defined Function
+CREATE PROCEDURE SetBaseUrl(@BaseUrl nvarchar(255))
+AS
+EXTERNAL NAME YAddressSqlFunction.YAddressSqlFunction.SetBaseUrl
+GO
+
+-- Create ProcessAddress User Defined Function
 CREATE FUNCTION ProcessAddress(@AddressLine1 nvarchar(255), @AddressLine2 nvarchar(255),
 								@UserKey nvarchar(255))
 RETURNS TABLE 
@@ -46,7 +52,7 @@ RETURNS TABLE
         TimeZoneOffset int,
         DstObserved bit,
         SalesTaxRate smallmoney,
-        SalesTaxJurisdiction nvarchar(255)
+        SalesTaxJurisdiction int
 )
 AS 
 EXTERNAL NAME YAddressSqlFunction.YAddressSqlFunction.InitMethod

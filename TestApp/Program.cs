@@ -38,7 +38,7 @@ namespace TestApp
             SqlInt32 TimeZoneOffset;
             SqlBoolean DstObserved;
             SqlMoney SalesTaxRate;
-            string SalesTaxJurisdiction;
+            SqlInt32 SalesTaxJurisdiction;
 
             IEnumerator r = e.GetEnumerator();
             r.MoveNext();

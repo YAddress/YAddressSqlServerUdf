@@ -45,6 +45,7 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SimpleJson.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="YAddressSqlFunction.cs" />
   </ItemGroup>

@@ -1,28 +1,36 @@
 ﻿using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data.SqlTypes;
 using Microsoft.SqlServer.Server;
 using System.Net;
 using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
+
+using SimpleJSON;
 
 public class YAddressSqlFunction
 {
+    static string _sBaseUrl = "http://www.yaddress.net/api/address";
+
+    // SQL function to configure base URL for API calls
+    [SqlFunction]
+    public static void SetBaseUrl(string Url)
+    {
+        _sBaseUrl = Url;
+    }
+
     // Init method of the User Defined Table Valued function
     [SqlFunction(FillRowMethodName = "FillRow")]
     public static IEnumerable InitMethod(string sAddressLine1, string sAddressLine2, string sUserKey)
     {
         // Call YAddress Web API
         string sRequest = string.Format(
-            "http://www.yaddress.net/api/address?AddressLine1={0}&AddressLine2={1}&UserKey={2}",
+            "{0}?AddressLine1={1}&AddressLine2={2}&UserKey={3}",
+            _sBaseUrl,
             Uri.EscapeDataString(sAddressLine1 ?? ""),
             Uri.EscapeDataString(sAddressLine2 ?? ""),
             Uri.EscapeDataString(sUserKey ?? ""));
         HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(sRequest);
-        req.Accept = "application/xml";
-        req.UserAgent = "YAddressSqlServerUdf/1.2.0";
+        req.UserAgent = "YAddressSqlServerUdf/2.0.0";
         WebResponse res = req.GetResponse();
         StreamReader sr = new StreamReader(res.GetResponseStream());
         string sRes = sr.ReadToEnd();
@@ -62,105 +70,46 @@ public class YAddressSqlFunction
         out SqlInt32 TimeZoneOffset,
         out SqlBoolean DstObserved,
         out SqlMoney SalesTaxRate,
-        out string SalesTaxJurisdiction)
+        out SqlInt32 SalesTaxJurisdiction)
     {
         try
         {
-            // Load XML doc
-            XmlDocument doc = new XmlDocument();
-            doc.LoadXml((string)obj);
-            XmlNode nd = doc.FirstChild;
+            // Parse JSON
+            JSONNode nd = JSON.Parse((string)obj);
 
-            // Parse values
-            ErrorCode = nd.GetInt("ErrorCode");
-            ErrorMessage = nd.GetString("ErrorMessage");
-            AddressLine1 = nd.GetOptionalString("AddressLine1");
-            AddressLine2 = nd.GetOptionalString("AddressLine2");
-            Number = nd.GetOptionalString("Number");
-            PreDir = nd.GetOptionalString("PreDir");
-            Street = nd.GetOptionalString("Street");
-            Suffix = nd.GetOptionalString("Suffix");
-            PostDir = nd.GetOptionalString("PostDir");
-            Sec = nd.GetOptionalString("Sec");
-            SecNumber = nd.GetOptionalString("SecNumber");
-            City = nd.GetOptionalString("City");
-            State = nd.GetOptionalString("State");
-            Zip = nd.GetOptionalString("Zip");
-            Zip4 = nd.GetOptionalString("Zip4");
-            County = nd.GetOptionalString("County");
-            StateFP = nd.GetOptionalString("StateFP");
-            CountyFP = nd.GetOptionalString("CountyFP");
-            CensusBlock = nd.GetOptionalString("CensusBlock");
-            CensusTract = nd.GetOptionalString("CensusTract");
-            Latitude = nd.GetOptionalDouble("Latitude") ?? SqlDouble.Null;
-            Longitude = nd.GetOptionalDouble("Longitude") ?? SqlDouble.Null;
-            GeoPrecision = nd.GetOptionalInt("GeoPrecision") ?? SqlInt32.Null;
-            TimeZoneOffset = nd.GetOptionalInt("TimeZoneOffset") ?? SqlInt32.Null;
-            DstObserved = nd.GetOptionalBool("DstObserved") ?? SqlBoolean.Null;
-            SalesTaxRate = nd.GetOptionalDecimal("SalesTaxRate") ?? SqlMoney.Null;
-            SalesTaxJurisdiction = nd.GetOptionalString("SalesTaxJurisdiction");
+            // Update values
+            ErrorCode = nd["ErrorCode"].AsInt;
+            ErrorMessage = nd["ErrorMessage"].AsString;
+            AddressLine1 = nd["AddressLine1"].AsString;
+            AddressLine2 = nd["AddressLine2"].AsString;
+            Number = nd["Number"].AsString;
+            PreDir = nd["PreDir"].AsString;
+            Street = nd["Street"].AsString;
+            Suffix = nd["Suffix"].AsString;
+            PostDir = nd["PostDir"].AsString;
+            Sec = nd["Sec"].AsString;
+            SecNumber = nd["SecNumber"].AsString;
+            City = nd["City"].AsString;
+            State = nd["State"].AsString;
+            Zip = nd["Zip"].AsString;
+            Zip4 = nd["Zip4"].AsString;
+            County = nd["County"].AsString;
+            StateFP = nd["StateFP"].AsString;
+            CountyFP = nd["CountyFP"].AsString;
+            CensusBlock = nd["CensusBlock"].AsString;
+            CensusTract = nd["CensusTract"].AsString;
+            Latitude = nd["Latitude"].AsNullableDouble ?? SqlDouble.Null;
+            Longitude = nd["Longitude"].AsNullableDouble ?? SqlDouble.Null;
+            GeoPrecision = nd["GeoPrecision"].AsInt;
+            TimeZoneOffset = nd["TimeZoneOffset"].AsNullableInt ?? SqlInt32.Null;
+            DstObserved = nd["DstObserved"].AsNullableBool ?? SqlBoolean.Null;
+            JSONNode ndSalesTax = nd["SalesTaxRate"];
+            SalesTaxRate = ndSalesTax.IsNull ? SqlMoney.Null : (SqlMoney)ndSalesTax.AsDouble;
+            SalesTaxJurisdiction = nd["SalesTaxJurisdiction"].AsNullableInt ?? SqlInt32.Null;
         }
         catch(Exception ex)
         {
             throw new Exception($"Error parsing YAddress Web API response: {obj}", ex);
         }
     }
-}
-
-// Required in .net 2.0 to use extension methods
-namespace System.Runtime.CompilerServices
-{
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class
-         | AttributeTargets.Method)]
-    public sealed class ExtensionAttribute : Attribute { }
-}
-
-static class XmlNodeExtensions
-{
-    public static int GetInt(this XmlNode xml, string sName)
-    {
-        return int.Parse(xml.SelectSingleNode(sName).InnerText);
-    }
-
-    public static int? GetOptionalInt(this XmlNode xml, string sName)
-    {
-        if (int.TryParse(xml.SelectSingleNode(sName)?.InnerText, out int n))
-            return n;
-        return null;
-    }
-
-    public static string GetString(this XmlNode xml, string sName)
-    {
-        return xml.SelectSingleNode(sName).InnerText;
-    }
-
-    public static string GetOptionalString(this XmlNode xml, string sName)
-    {
-        return xml.SelectSingleNode(sName)?.InnerText;
-    }
-
-    public static double? GetOptionalDouble(this XmlNode xml, string sName)
-    {
-        if (double.TryParse(xml.SelectSingleNode(sName)?.InnerText, out double f))
-            return f;
-        return null;
-    }
-
-    public static decimal? GetOptionalDecimal(this XmlNode xml, string sName)
-    {
-        if (decimal.TryParse(xml.SelectSingleNode(sName)?.InnerText, out decimal f))
-            return f;
-        return null;
-    }
-
-    public static bool? GetOptionalBool(this XmlNode xml, string sName)
-    {
-        XmlNode nd = xml.SelectSingleNode(sName);
-        if (bool.TryParse(nd?.InnerText, out bool b))
-            return b;
-        if (int.TryParse(nd?.InnerText, out int n))
-            return (n != 0);
-        return null;
-    }
-
 }
