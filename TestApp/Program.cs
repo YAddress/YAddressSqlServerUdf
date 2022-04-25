@@ -9,7 +9,7 @@ namespace TestApp
         static void Main(string[] args)
         {
             IEnumerable e = YAddressSqlFunction.InitMethod(
-                "506 Fourth Avenue Unit 1", "Asbury Prk, NJ", null);
+                "506 Fourth Avenue Unit 1", "Asbury Prk, NJ", null, null);
 
 
             int ErrorCode;

@@ -9,28 +9,20 @@ using SimpleJSON;
 
 public class YAddressSqlFunction
 {
-    static string _sBaseUrl = "http://www.yaddress.net/api/address";
-
-    // SQL function to configure base URL for API calls
-    [SqlFunction]
-    public static void SetBaseUrl(string Url)
-    {
-        _sBaseUrl = Url;
-    }
-
     // Init method of the User Defined Table Valued function
     [SqlFunction(FillRowMethodName = "FillRow")]
-    public static IEnumerable InitMethod(string sAddressLine1, string sAddressLine2, string sUserKey)
+    public static IEnumerable InitMethod(string sAddressLine1, string sAddressLine2, 
+        string sUserKey, string sBaseUrl)
     {
         // Call YAddress Web API
         string sRequest = string.Format(
-            "{0}?AddressLine1={1}&AddressLine2={2}&UserKey={3}",
-            _sBaseUrl,
+            "{0}/Address?AddressLine1={1}&AddressLine2={2}&UserKey={3}",
+            sBaseUrl ?? "http://www.yaddress.net/api",
             Uri.EscapeDataString(sAddressLine1 ?? ""),
             Uri.EscapeDataString(sAddressLine2 ?? ""),
             Uri.EscapeDataString(sUserKey ?? ""));
         HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(sRequest);
-        req.UserAgent = "YAddressSqlServerUdf/2.0.0";
+        req.UserAgent = "YAddressSqlServerUdf/2.1.0";
         WebResponse res = req.GetResponse();
         StreamReader sr = new StreamReader(res.GetResponseStream());
         string sRes = sr.ReadToEnd();

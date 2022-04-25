@@ -10,20 +10,16 @@ GO
 
 -- Create assemply from the DLL
 -- Replace the path as appropriate
+-- If it fails with error "Cannot obtain information about [user]/[group]...",
+-- execute "sp_changedbowner 'sa'"
 CREATE ASSEMBLY YAddressSqlFunction
 FROM 'C:\temp\YAddressSqlFunction.dll' 
-WITH PERMISSION_SET = UNSAFE;
-GO
-
--- Create SetBaseUrl User Defined Function
-CREATE PROCEDURE SetBaseUrl(@BaseUrl nvarchar(255))
-AS
-EXTERNAL NAME YAddressSqlFunction.YAddressSqlFunction.SetBaseUrl
+WITH PERMISSION_SET = EXTERNAL_ACCESS;
 GO
 
 -- Create ProcessAddress User Defined Function
 CREATE FUNCTION ProcessAddress(@AddressLine1 nvarchar(255), @AddressLine2 nvarchar(255),
-								@UserKey nvarchar(255))
+								@UserKey nvarchar(255), @BaseUrl nvarchar(1024))
 RETURNS TABLE 
 (
         ErrorCode int,
@@ -59,4 +55,4 @@ EXTERNAL NAME YAddressSqlFunction.YAddressSqlFunction.InitMethod
 GO
 
 -- Test the function
-SELECT * FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL)
+SELECT * FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL, NULL)

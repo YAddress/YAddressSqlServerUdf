@@ -17,7 +17,7 @@ The UDF can be called from T-SQL queries and stored procedures or incorporated i
 ProcessAddress is a table-valued UDF. Sample values returned by YAddress: 
 
 ```sql
-SELECT * FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL) 
+SELECT * FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL, NULL) 
 ```
 #### Results:
 ErrorCode: 0<br>
@@ -53,6 +53,6 @@ ProcessAddress returns address location as two floating point values of latitude
 
 ```sql
 SELECT Location = GEOGRAPHY::Point(Latitude, Longitude, 4326)
-FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL) 
+FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL, NULL) 
 ```
 
