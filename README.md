@@ -14,8 +14,22 @@ The UDF can be called from T-SQL queries and stored procedures or incorporated i
 
 ### ProcessAddress
 
-ProcessAddress is a table-valued UDF. Sample values returned by YAddress: 
+ProcessAddress is a table-valued UDF (User Defined Function). It returns a single row of data
+with address fields in its columns.
 
+```sql
+ProcessAddress(@AddressLine1 nvarchar(255), @AddressLine2 nvarchar(255),
+				@UserKey nvarchar(255), @BaseUrl nvarchar(1024))
+```
+**AddressLine1:** street address line.
+
+**AddressLine2:** city, state, zip.
+
+**UserKey:** YAddress Web API user key. Set to NULL if you do not have a YAddress account.
+
+**BaseUrl:** Base URL for API calls. Set to NULL to use the standard base URL.
+
+### Example
 ```sql
 SELECT * FROM ProcessAddress('506 Fourth Avenue Unit 1', 'Asbury Prk, NJ', NULL, NULL) 
 ```
