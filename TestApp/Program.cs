@@ -11,7 +11,6 @@ namespace TestApp
             IEnumerable e = YAddressSqlFunction.InitMethod(
                 "506 Fourth Avenue Unit 1", "Asbury Prk, NJ", null, null);
 
-
             int ErrorCode;
             string ErrorMessage;
             string AddressLine1;
@@ -37,6 +36,8 @@ namespace TestApp
             SqlInt32 GeoPrecision;
             SqlInt32 TimeZoneOffset;
             SqlBoolean DstObserved;
+            SqlInt32 PlaceFP;
+            string CityMunicipality;
             SqlMoney SalesTaxRate;
             SqlInt32 SalesTaxJurisdiction;
 
@@ -68,6 +69,8 @@ namespace TestApp
                 out GeoPrecision,
                 out TimeZoneOffset,
                 out DstObserved,
+                out PlaceFP,
+                out CityMunicipality,
                 out SalesTaxRate,
                 out SalesTaxJurisdiction);
         }

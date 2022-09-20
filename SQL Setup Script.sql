@@ -47,6 +47,8 @@ RETURNS TABLE
         GeocodePrecision int,
         TimeZoneOffset int,
         DstObserved bit,
+        PlaceFP int,
+        CityMunicipality nvarchar(255),
         SalesTaxRate smallmoney,
         SalesTaxJurisdiction int
 )

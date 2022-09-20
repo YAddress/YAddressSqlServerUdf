@@ -238,6 +238,17 @@ namespace SimpleJSON
             }
         }
 
+        public virtual decimal? AsNullableDecimal
+        {
+            get
+            {
+                if (Tag != JSONBinaryTag.Null &&
+                    decimal.TryParse(Value, out decimal f))
+                    return f;
+                return null;
+            }
+        }
+
         public virtual bool AsBool
         {
             get

@@ -22,11 +22,19 @@ public class YAddressSqlFunction
             Uri.EscapeDataString(sAddressLine2 ?? ""),
             Uri.EscapeDataString(sUserKey ?? ""));
         HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(sRequest);
-        req.UserAgent = "YAddressSqlServerUdf/2.1.0";
-        WebResponse res = req.GetResponse();
-        StreamReader sr = new StreamReader(res.GetResponseStream());
-        string sRes = sr.ReadToEnd();
-        sr.Close();
+        req.UserAgent = "YAddressSqlServerUdf/2.2.0";
+        string sRes;
+        try
+        {
+            WebResponse res = req.GetResponse();
+            StreamReader sr = new StreamReader(res.GetResponseStream());
+            sRes = sr.ReadToEnd();
+            sr.Close();
+        }
+        catch(Exception ex)
+        {
+            throw new Exception("Yaddress Web API call failed.", ex);
+        }
 
         // One member array as an instance of IEnnumerable
         string[] arr = { sRes };
@@ -35,7 +43,7 @@ public class YAddressSqlFunction
 
     // FillRow method of the User Defined Table Valued function
     public static void FillRow(
-        Object obj, 
+        Object obj,
         out int ErrorCode,
         out string ErrorMessage,
         out string AddressLine1,
@@ -61,6 +69,8 @@ public class YAddressSqlFunction
         out SqlInt32 GeoPrecision,
         out SqlInt32 TimeZoneOffset,
         out SqlBoolean DstObserved,
+        out SqlInt32 PlaceFP,
+        out string CityMunicipality,
         out SqlMoney SalesTaxRate,
         out SqlInt32 SalesTaxJurisdiction)
     {
@@ -95,8 +105,9 @@ public class YAddressSqlFunction
             GeoPrecision = nd["GeoPrecision"].AsInt;
             TimeZoneOffset = nd["TimeZoneOffset"].AsNullableInt ?? SqlInt32.Null;
             DstObserved = nd["DstObserved"].AsNullableBool ?? SqlBoolean.Null;
-            JSONNode ndSalesTax = nd["SalesTaxRate"];
-            SalesTaxRate = ndSalesTax.IsNull ? SqlMoney.Null : (SqlMoney)ndSalesTax.AsDouble;
+            PlaceFP = nd["PlaceFP"].AsNullableInt ?? SqlInt32.Null;
+            CityMunicipality = nd["CityMunicipality"].AsString;
+            SalesTaxRate = nd["SalesTaxRate"].AsNullableDecimal ?? SqlMoney.Null;
             SalesTaxJurisdiction = nd["SalesTaxJurisdiction"].AsNullableInt ?? SqlInt32.Null;
         }
         catch(Exception ex)
