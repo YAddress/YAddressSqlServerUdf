@@ -15,23 +15,20 @@ public class YAddressSqlFunction
         string sUserKey, string sBaseUrl)
     {
         // Call YAddress Web API
-        string sRequest = string.Format(
+        string sUrl = string.Format(
             "{0}/Address?AddressLine1={1}&AddressLine2={2}&UserKey={3}",
             sBaseUrl ?? "http://www.yaddress.net/api",
             Uri.EscapeDataString(sAddressLine1 ?? ""),
             Uri.EscapeDataString(sAddressLine2 ?? ""),
             Uri.EscapeDataString(sUserKey ?? ""));
-        HttpWebRequest req = (HttpWebRequest)HttpWebRequest.Create(sRequest);
-        req.UserAgent = "YAddressSqlServerUdf/2.2.0";
         string sRes;
         try
         {
-            WebResponse res = req.GetResponse();
-            StreamReader sr = new StreamReader(res.GetResponseStream());
-            sRes = sr.ReadToEnd();
-            sr.Close();
+            WebClient client = new WebClient();
+            client.Headers["User-Agent"] = "YAddressSqlServerUdf/2.2.1";
+            sRes = client.DownloadString(sUrl);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new Exception("Yaddress Web API call failed.", ex);
         }
@@ -72,7 +69,8 @@ public class YAddressSqlFunction
         out SqlInt32 PlaceFP,
         out string CityMunicipality,
         out SqlMoney SalesTaxRate,
-        out SqlInt32 SalesTaxJurisdiction)
+        out SqlInt32 SalesTaxJurisdiction,
+        out string UspsCarrierRoute)
     {
         try
         {
@@ -109,8 +107,9 @@ public class YAddressSqlFunction
             CityMunicipality = nd["CityMunicipality"].AsString;
             SalesTaxRate = nd["SalesTaxRate"].AsNullableDecimal ?? SqlMoney.Null;
             SalesTaxJurisdiction = nd["SalesTaxJurisdiction"].AsNullableInt ?? SqlInt32.Null;
+            UspsCarrierRoute = nd["UspsCarrierRoute"].AsString;
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new Exception($"Error parsing YAddress Web API response: {obj}", ex);
         }

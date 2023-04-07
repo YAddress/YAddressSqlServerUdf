@@ -1,10 +1,12 @@
+-- (!!!) Make sure the database where want UDF installed is selected as current database
+
 -- Enable CLR integration
 EXEC sp_configure 'clr enabled', 1
 RECONFIGURE
 GO
 
 -- Set proper permissions on the database
-ALTER DATABASE [Database Name] 
+ALTER DATABASE CURRENT 
 SET TRUSTWORTHY ON
 GO
 
@@ -50,7 +52,8 @@ RETURNS TABLE
         PlaceFP int,
         CityMunicipality nvarchar(255),
         SalesTaxRate smallmoney,
-        SalesTaxJurisdiction int
+        SalesTaxJurisdiction int,
+        UspsCarrierRoute nvarchar(255)
 )
 AS 
 EXTERNAL NAME YAddressSqlFunction.YAddressSqlFunction.InitMethod

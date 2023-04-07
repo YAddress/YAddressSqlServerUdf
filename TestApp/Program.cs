@@ -40,6 +40,7 @@ namespace TestApp
             string CityMunicipality;
             SqlMoney SalesTaxRate;
             SqlInt32 SalesTaxJurisdiction;
+            string UspsCarrierRoute;
 
             IEnumerator r = e.GetEnumerator();
             r.MoveNext();
@@ -72,7 +73,8 @@ namespace TestApp
                 out PlaceFP,
                 out CityMunicipality,
                 out SalesTaxRate,
-                out SalesTaxJurisdiction);
+                out SalesTaxJurisdiction,
+                out UspsCarrierRoute);
         }
     }
 }
