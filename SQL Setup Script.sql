@@ -1,4 +1,4 @@
--- (!!!) Make sure the database where want UDF installed is selected as current database
+-- (!!!) Make sure the database where you want UDF installed is selected as current
 
 -- Enable CLR integration
 EXEC sp_configure 'clr enabled', 1
