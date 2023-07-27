@@ -39,9 +39,8 @@ public class YAddressSqlFunction
             throw new Exception("Yaddress Web API call failed.", ex);
         }
 
-        // One member array as an instance of IEnnumerable
-        string[] arr = { sRes };
-        return arr;
+        // Return one result as ennumerable
+        yield return sRes;
     }
 
     // FillRow method of the User Defined Table Valued function
