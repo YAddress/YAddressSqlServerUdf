@@ -9,6 +9,11 @@ using SimpleJSON;
 
 public class YAddressSqlFunction
 {
+    static readonly Version _ver =
+        typeof(YAddressSqlFunction).Assembly.GetName().Version;
+    static readonly string _sUserAgent =
+        $"YAddressSqlServerUdf/{_ver.Major}.{_ver.Minor}.{_ver.Build}";
+
     // Init method of the User Defined Table Valued function
     [SqlFunction(FillRowMethodName = "FillRow")]
     public static IEnumerable InitMethod(string sAddressLine1, string sAddressLine2, 
@@ -25,7 +30,8 @@ public class YAddressSqlFunction
         try
         {
             WebClient client = new WebClient();
-            client.Headers["User-Agent"] = "YAddressSqlServerUdf/2.2.1";
+            client.Headers["Accept"] = "application/json";
+            client.Headers["User-Agent"] = _sUserAgent;
             sRes = client.DownloadString(sUrl);
         }
         catch (Exception ex)
@@ -52,6 +58,7 @@ public class YAddressSqlFunction
         out string PostDir,
         out string Sec,
         out string SecNumber,
+        out SqlBoolean SecValidated,
         out string City,
         out string State,
         out string Zip,
@@ -89,6 +96,7 @@ public class YAddressSqlFunction
             PostDir = nd["PostDir"].AsString;
             Sec = nd["Sec"].AsString;
             SecNumber = nd["SecNumber"].AsString;
+            SecValidated = nd["SecValidated"].AsNullableBool ?? SqlBoolean.Null;
             City = nd["City"].AsString;
             State = nd["State"].AsString;
             Zip = nd["Zip"].AsString;

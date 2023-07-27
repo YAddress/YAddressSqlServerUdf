@@ -22,6 +22,7 @@ namespace TestApp
             string PostDir;
             string Sec;
             string SecNumber;
+            SqlBoolean SecValidated;
             string City;
             string State;
             string Zip;
@@ -56,6 +57,7 @@ namespace TestApp
                 out PostDir,
                 out Sec,
                 out SecNumber,
+                out SecValidated,
                 out City,
                 out State,
                 out Zip,

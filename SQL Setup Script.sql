@@ -35,6 +35,7 @@ RETURNS TABLE
         PostDir nvarchar(255),
         Sec nvarchar(255),
         SecNumber nvarchar(255),
+        SecValidated bit,
         City nvarchar(255),
         State nvarchar(255),
         Zip nvarchar(255),
