@@ -6,7 +6,7 @@ The UDF can be called from T-SQL queries and stored procedures or incorporated i
 
 # Setup
 
-1. Download YAddress UDF Binaries at http://www.yaddress.net/Downloads/YAddressSqlServerUdfBinaries.zip
+1. Download YAddress UDF Binaries at https://github.com/YAddress/YAddressSqlServerUdf/releases/latest/download/YAddressSqlServerUdfBinaries.zip
 2. Follow installation steps in "SQL Setup Script.sql". 
 
 
